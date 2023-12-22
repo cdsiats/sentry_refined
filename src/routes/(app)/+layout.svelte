@@ -3,7 +3,7 @@
 	import { LayoutDashboardIcon, KanbanIcon } from 'lucide-svelte';
 </script>
 
-<div class="flex min-h-screen">
+<div class="flex h-screen">
 	<div class="w-[150px] bg-secondary py-4 max-md:hidden">
 		<p class="text-center text-2xl">Sentry</p>
 		<nav class="my-4">

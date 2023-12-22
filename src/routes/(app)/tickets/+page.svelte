@@ -11,6 +11,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Label } from '$lib/components/ui/label';
 	import { pb, currentUser } from '$lib/pb.js';
+	import { goto } from '$app/navigation';
 
 	interface Ticket {
 		id: string;
