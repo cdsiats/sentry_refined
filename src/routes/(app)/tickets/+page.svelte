@@ -10,7 +10,7 @@
 	import { ChevronLeft, ChevronRight, PlusIcon } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Label } from '$lib/components/ui/label';
-	import { pb } from '$lib/pb.js';
+	import { pb, currentUser } from '$lib/pb.js';
 
 	interface Ticket {
 		id: string;
@@ -39,14 +39,19 @@
 
 	let title: string;
 	let description: string;
+	let area: { value: string; label: string };
+	let severity: { value: string; label: string };
 
 	async function submitTicket() {
 		const response = await pb.collection('tickets').create({
-			title: 'Test ticket',
-			severity: 'Severity 1',
-			area: 'College of Informatics',
-			description: 'This is a test ticket'
+			title: title,
+			severity: severity.value,
+			area: area.value,
+			description: description,
+			created_by: $currentUser.id
 		});
+
+		await getTickets(page);
 	}
 
 	function formatDate(date: string) {
@@ -66,7 +71,7 @@
 	<div class="my-2 flex justify-end">
 		<Dialog.Root>
 			<Dialog.Trigger>
-				<Button>
+				<Button size="sm">
 					Add New Ticket
 					<PlusIcon class="mx-1 h-4 w-4" />
 				</Button>
@@ -78,16 +83,21 @@
 						Include proper title, description and severity of the issue you are facing.
 					</Dialog.Description>
 				</Dialog.Header>
-				<form class="flex flex-col gap-4">
+				<form on:submit|preventDefault={submitTicket} class="flex flex-col gap-4">
 					<div>
 						<Label for="title">Title</Label>
-						<Input placeholder="Enter a short and concise title" id="title" type="text" />
+						<Input
+							bind:value={title}
+							placeholder="Enter a short and concise title"
+							id="title"
+							type="text"
+						/>
 					</div>
 					<div class="flex gap-1">
 						<!-- Area selection -->
 						<div class="flex-1">
 							<Label>Area</Label>
-							<Select.Root>
+							<Select.Root bind:selected={area}>
 								<Select.Trigger>
 									<Select.Value placeholder="Area" />
 								</Select.Trigger>
@@ -100,7 +110,7 @@
 						<!-- Severity selection -->
 						<div class="flex-1">
 							<Label>Severity</Label>
-							<Select.Root>
+							<Select.Root bind:selected={severity}>
 								<Select.Trigger>
 									<Select.Value placeholder="Severity" />
 								</Select.Trigger>
@@ -115,7 +125,11 @@
 					</div>
 					<div class="grid">
 						<Label for="description">Description</Label>
-						<Textarea placeholder="Be descriptive about the issue" id="description" />
+						<Textarea
+							bind:value={description}
+							placeholder="Be descriptive about the issue"
+							id="description"
+						/>
 					</div>
 					<div class="self-end">
 						<Button type="submit">Submit</Button>
